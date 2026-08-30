@@ -1,0 +1,31 @@
+from extract import extract_pdf
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+def chunk_documents(content):
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=150,
+        separators=[
+            "\n\n",
+            "\n",
+            ". ",
+            " ",
+            ""
+        ]
+    )
+
+    chunks = splitter.split_documents(content)
+
+    return chunks
+
+if __name__ == '__main__':
+    docs = extract_pdf()
+    # content_new = ' '.join(content)
+    print(type(docs))
+    # print(docs)
+    chunks = chunk_documents(docs)
+    for chunk in chunks:
+        print("="*20)
+        print(chunk.metadata)
+        print(chunk.page_content)
