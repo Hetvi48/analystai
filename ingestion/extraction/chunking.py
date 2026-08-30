@@ -1,7 +1,8 @@
-from extract import extract_pdf
+from ingestion.extraction.extract import extract_pdf
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-def chunk_documents(content):
+def chunk_documents():
+    docs = extract_pdf()
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -15,7 +16,7 @@ def chunk_documents(content):
         ]
     )
 
-    chunks = splitter.split_documents(content)
+    chunks = splitter.split_documents(docs)
 
     return chunks
 
