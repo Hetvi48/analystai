@@ -15,3 +15,5 @@ metric = "cosine"
 model = "llama-text-embed-v2"
 
 K = 2
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
