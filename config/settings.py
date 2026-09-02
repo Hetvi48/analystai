@@ -17,3 +17,6 @@ model = "llama-text-embed-v2"
 K = 2
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+chat_model = "llama-3.1-8b-instant"
+temperature = 0.0
+max_retries = 2
