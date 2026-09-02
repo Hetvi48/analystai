@@ -16,9 +16,9 @@ class Insertion:
             if not pc.has_index(self.INDEX_NAME):
 
                 pc.create_index(
-                    name=self.INDEX_NAME,
-                    dimension=1024,
-                    metric="cosine",
+                    name = self.INDEX_NAME,
+                    dimension = settings.dimensions,
+                    metric = settings.metric,
                     spec=ServerlessSpec(
                         cloud="aws",
                         region="us-east-1"
@@ -33,8 +33,8 @@ class Insertion:
         if self.createIndex():
             try:
                 self.embeddings = PineconeEmbeddings(
-                    model="llama-text-embed-v2",
-                    pinecone_api_key=self.pinecone_api_key
+                    model = settings.model,
+                    pinecone_api_key = self.pinecone_api_key
                 )
                 return self.embeddings
             except Exception as e:
