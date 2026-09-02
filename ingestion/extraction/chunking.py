@@ -1,12 +1,13 @@
 from ingestion.extraction.extract import extract_pdf
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+import config.settings as settings
 
 def chunk_documents():
     docs = extract_pdf()
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=150,
+        chunk_size = settings.chunk_Size,
+        chunk_overlap = settings.chunk_Overlap,
         separators=[
             "\n\n",
             "\n",
