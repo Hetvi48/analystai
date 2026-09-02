@@ -10,7 +10,7 @@ INDEX_NAME = settings.INDEX_NAME
 # Create embedding model
 
 embeddings = PineconeEmbeddings(
-    model="llama-text-embed-v2",
+    model=settings.model,
     pinecone_api_key=PINECONE_API_KEY
 )
 
@@ -35,7 +35,7 @@ query = "I want to understand the market overview. for that you can give me some
 
 results = vectorstore.similarity_search_with_score(
     query,
-    k=2
+    k = settings.K
 )
 
 # Display results
