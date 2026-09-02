@@ -13,3 +13,5 @@ chunk_Overlap = 150
 dimensions = 1024
 metric = "cosine"
 model = "llama-text-embed-v2"
+
+K = 2
