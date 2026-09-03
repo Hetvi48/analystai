@@ -1,6 +1,8 @@
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 import config.settings as settings
+import model.test as test
+from retrieval.chunk_retrieval import Retrieval
 
 class ChatBot:
     def __init__(self):
@@ -19,10 +21,14 @@ class ChatBot:
         return self.model
 
     def createPromptTemplate(self):
+        self.hub_chain = test.langsimthPrompt()
+        self.hub_prompt = self.hub_chain.first
+        self.system_text = self.hub_prompt.messages[0].prompt.template # pulls out the raw string
         self.template = ChatPromptTemplate(
             [
-                ("system", "You are helpful AI assistant. keep response short"),
+                ("system", self.system_text),
                 ("user", "{input}"),
+                ("user", "{chunks}")
             ]
         )
         return self.template
@@ -45,7 +51,9 @@ class ChatBot:
                 break
 
             try:
-                self.response = self.chain.invoke({"input": self.user_input})
+                self.obj = Retrieval()
+                self.chunk = self.obj.retrieval(self.user_input)
+                self.response = self.chain.invoke({"chunks": self.chunk, "input": self.user_input})
                 print(self.response.content)
             except Exception as e:
                 print(f"Error: {e}")
