@@ -20,3 +20,9 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 chat_model = "openai/gpt-oss-120b"
 temperature = 0.0
 max_retries = 2
+
+AWS_ENDPOINT_URL_S3 = os.getenv("AWS_ENDPOINT_URL_S3")
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_REGION = os.getenv("AWS_REGION")
+NEON_BUCKET_NAME = os.getenv("NEON_BUCKET_NAME")
