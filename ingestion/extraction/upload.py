@@ -30,7 +30,7 @@ async def upload_file(filepath):
     )
 
     # print success statement
-    print(f"{filepath.name} uploaded successfully")
+    # print(f"{filepath.name} uploaded successfully")
 
     # return statement
     return {
@@ -57,14 +57,15 @@ async def upload_multiple_files():
         result["success"] for result in results
     )
 
-    print(
-        f"Upload complete: {successful}/{len(pdf_files)} successful."
-    )
+    # print(
+    #     f"Upload complete: {successful}/{len(pdf_files)} successful."
+    # )
 
-    return results
+    return results, successful
 
 if __name__ == "__main__":
-    asyncio.run(upload_multiple_files())
+    result, successful = asyncio.run(upload_multiple_files())
+    print(f"{successful} pdfs uploaded successfully!!")
 
 '''
 # without asyncio
