@@ -31,7 +31,7 @@ vectorstore = PineconeVectorStore(
 
 # Search
 
-query = "I want to understand the market overview. for that you can give me some of the key metrices in order to understand this overview in better way."
+query = "explain the AeroCare project from Hetvi's resume. "
 
 results = vectorstore.similarity_search_with_score(
     query,
