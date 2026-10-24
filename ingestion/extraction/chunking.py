@@ -1,33 +1,41 @@
-from ingestion.extraction.extract import extract_pdf
+# from ingestion.extraction.extract import extract_pdf
+from ingestion.extraction.download_pdf import PDFExtract
+import asyncio
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 import config.settings as settings
 
-def chunk_documents():
-    docs = extract_pdf()
+class ChunkDoc:
+    def __init__(self):
+        extractor = PDFExtract()
+        self.docs = asyncio.run(extractor.extract_multiple_pdfs())
 
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size = settings.chunk_Size,
-        chunk_overlap = settings.chunk_Overlap,
-        separators=[
-            "\n\n",
-            "\n",
-            ". ",
-            " ",
-            ""
-        ]
-    )
+    def chunk_documents(self):
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size = settings.chunk_Size,
+            chunk_overlap = settings.chunk_Overlap,
+            separators=[
+                "\n\n",
+                "\n",
+                ". ",
+                " ",
+                ""
+            ]
+        )
 
-    chunks = splitter.split_documents(docs)
-
-    return chunks
+        self.chunks = self.splitter.split_documents(self.docs)
+        return self.chunks
 
 if __name__ == '__main__':
-    docs = extract_pdf()
-    # content_new = ' '.join(content)
-    print(type(docs))
-    # print(docs)
-    chunks = chunk_documents(docs)
-    for chunk in chunks:
-        print("="*20)
-        print(chunk.metadata)
-        print(chunk.page_content)
+    obj = ChunkDoc()
+
+    print(f"Total extracted pages: {len(obj.docs)}")
+
+    chunks = obj.chunk_documents()
+
+    print(f"Total chunks generated: {len(chunks)}")
+
+    for i, chunk in enumerate(chunks):
+        print("=" * 40)
+        print(f"Chunk number: {i + 1}")
+        print(f"Metadata: {chunk.metadata}")
+        print(f"Content preview: {chunk.page_content}")
