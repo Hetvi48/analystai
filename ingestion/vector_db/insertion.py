@@ -8,7 +8,9 @@ class Insertion:
     def __init__(self):
         self.pinecone_api_key = settings.PINECONE_API_KEY
         self.INDEX_NAME = settings.INDEX_NAME
-        self.chunks = ChunkDoc.chunk_documents()
+        # Create the chunking object and generate chunks
+        chunker = ChunkDoc()
+        self.chunks = chunker.chunk_documents()
 
     def createIndex(self):
         try:
