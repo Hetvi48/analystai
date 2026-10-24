@@ -1,5 +1,5 @@
 import config.settings as settings
-from ingestion.extraction.chunking import chunk_documents
+from ingestion.extraction.chunking import ChunkDoc
 from langchain_pinecone import PineconeVectorStore
 from langchain_pinecone import PineconeEmbeddings
 from pinecone import Pinecone, ServerlessSpec
@@ -8,7 +8,7 @@ class Insertion:
     def __init__(self):
         self.pinecone_api_key = settings.PINECONE_API_KEY
         self.INDEX_NAME = settings.INDEX_NAME
-        self.chunks = chunk_documents()
+        self.chunks = ChunkDoc.chunk_documents()
 
     def createIndex(self):
         try:
