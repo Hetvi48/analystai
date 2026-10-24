@@ -1,70 +1,70 @@
 import boto3
 import config.settings as settings
-import os
 from pathlib import Path
 import asyncio
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-PDF_FOLDER = PROJECT_ROOT / "ingestion" / "data"
+class UploadPDF:
+    def __init__(self):
+        self.PROJECT_ROOT = Path(__file__).resolve().parents[2]
+        self.PDF_FOLDER = self.PROJECT_ROOT / "ingestion" / "data"
+        self.s3 = boto3.client(
+            's3',
+            region_name = settings.AWS_REGION,
+            endpoint_url = settings.AWS_ENDPOINT_URL_S3,
+            aws_access_key_id = settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY,
+        )
+        self.BUCKET_NAME = settings.NEON_BUCKET_NAME
 
-s3 = boto3.client(
-    's3',
-    region_name = settings.AWS_REGION,
-    endpoint_url = settings.AWS_ENDPOINT_URL_S3,
-    aws_access_key_id = settings.AWS_ACCESS_KEY_ID,
-    aws_secret_access_key = settings.AWS_SECRET_ACCESS_KEY,
-)
+    async def upload_file(self, filepath):
+        # define object key
+        self.object_key = f"documents/{filepath.name}"
 
-BUCKET_NAME = settings.NEON_BUCKET_NAME
+        # code to upload a single file
+        await asyncio.to_thread(
+            self.s3.upload_file,
+            str(filepath),
+            self.BUCKET_NAME,
+            self.object_key
+        )
 
-async def upload_file(filepath):
-    # define object key
-    object_key = f"documents/{filepath.name}"
+        # print success statement
+        # print(f"{filepath.name} uploaded successfully")
 
-    # code to upload a single file
-    await asyncio.to_thread(
-        s3.upload_file,
-        str(filepath),
-        BUCKET_NAME,
-        object_key
-    )
+        # return statement
+        return {
+            "filename": filepath.name,
+            "object_key": self.object_key,
+            "success": True
+        }
 
-    # print success statement
-    # print(f"{filepath.name} uploaded successfully")
+    async def upload_multiple_files(self):
+        # iterate through all files in the folder with .pdf
+        self.pdf_files = [file for file in self.PDF_FOLDER.iterdir() if file.is_file() and file.suffix.lower() == '.pdf']
 
-    # return statement
-    return {
-        "filename": filepath.name,
-        "object_key": object_key,
-        "success": True
-    }
+        if not self.pdf_files:
+            print("No pdf found")
+            return []
+        
+        # call upload_pdf function for each file
+        tasks = [self.upload_file(file) for file in self.pdf_files]
 
-async def upload_multiple_files():
-    # iterate through all files in the folder with .pdf
-    pdf_files = [file for file in PDF_FOLDER.iterdir() if file.is_file() and file.suffix.lower() == '.pdf']
+        self.results = await asyncio.gather(*tasks)
 
-    if not pdf_files:
-        print("No pdf found")
-        return []
-    
-    # call upload_pdf function for each file
-    tasks = [upload_file(file) for file in pdf_files]
+        # print successful statement
+        self.successful = sum(
+            result["success"] for result in self.results
+        )
 
-    results = await asyncio.gather(*tasks)
+        # print(
+        #     f"Upload complete: {successful}/{len(pdf_files)} successful."
+        # )
 
-    # print successful statement
-    successful = sum(
-        result["success"] for result in results
-    )
-
-    # print(
-    #     f"Upload complete: {successful}/{len(pdf_files)} successful."
-    # )
-
-    return results, successful
+        return self.results, self.successful
 
 if __name__ == "__main__":
-    result, successful = asyncio.run(upload_multiple_files())
+    uploader = UploadPDF()
+    result, successful = asyncio.run(uploader.upload_multiple_files())
     print(f"{successful} pdfs uploaded successfully!!")
 
 '''
